@@ -1,0 +1,34 @@
+{
+  "name": "mtfileupload",
+  "version": "1.0.0",
+  "description": "A simple and Ultra light file upload with preview for images. only client side.",
+  "main": "dist/mt.fileupload.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mesuttalebi/MtFileUpload.git"
+  },
+  "keywords": [
+    "FileUpload",
+    "simple",
+    "file",
+    "upload",
+    "upload",
+    "with",
+    "preview"
+  ],
+  "author": "Mesut Talebi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mesuttalebi/MtFileUpload/issues"
+  },
+  "homepage": "https://github.com/mesuttalebi/MtFileUpload#readme",
+  "dependencies": {    
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.22",
+    "tslint": "^5.11.0"
+  }
+}
