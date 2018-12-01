@@ -89,10 +89,10 @@ class MtFileUpload {
     private bindEvents(): void {
         let fileInput = $(this.inputName);
         let self = this;
-        $(fileInput).on('change', function (ev) {
+        $(fileInput).on('change', function () {
             $(self.options.previewContainer).html('');
-            let inputElm = <HTMLInputElement>this;
-            if (self.checkFileValidity(inputElm.files, self.options.types)) {
+
+            if (self.checkFileValidity(this.files, self.options.types)) {
 
                 var reader = new FileReader();
 
@@ -104,21 +104,20 @@ class MtFileUpload {
                         $(self.options.previewContainer).append(preview);                        
                     }
 
-                    if (inputElm.files.length > 0) {
+                    if (this.files.length > 0) {
                         let ul = '<ul></ul>';
                         // when the file is read it triggers the onload event above.  
-                        for (var i = 0; i < inputElm.files.length; i++) {
-                            if (inputElm.files[i].type.indexOf("image/") >= 0) {
-                                reader.readAsDataURL(inputElm.files[i]);
+                        for (var i = 0; i < this.files.length; i++) {
+                            if (this.files[i].type.indexOf("image/") >= 0) {
+                                reader.readAsDataURL(this.files[i]);
                             }
 
-                            let li = "<li>" + inputElm.files[i].name + "</li>";
+                            let li = "<li>" + this.files[i].name + "</li>";
                             $(ul).append(li);
                         }
                         $(self.options.previewContainer).append(ul);
                     }
                     else {
-                        // 
                         // What to do if no files added?
                     }
                 }                                
@@ -234,9 +233,14 @@ class MtFileUpload {
             case FileTypes.jpeg:
             case FileTypes.tif:
             case FileTypes.image:
-                return fileType.indexOf("image/") >= 0;
+                return fileType.indexOf("image/") >= 0 && fileType.indexOf("ico") === -1;
             default:
                 return false;
         }
+    }
+
+    post() {
+        let options: JQueryFormOptions;
+
     }
 }
