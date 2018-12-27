@@ -91,8 +91,8 @@ class MtFileUpload {
         let self = this;
         $(fileInput).on('change', function () {
             $(self.options.previewContainer).html('');
-
-            if (self.checkFileValidity(this.files, self.options.types)) {
+            var fileInput = (<HTMLInputElement>this);
+            if (self.checkFileValidity(fileInput.files, self.options.types)) {
 
                 var reader = new FileReader();
 
@@ -104,15 +104,15 @@ class MtFileUpload {
                         $(self.options.previewContainer).append(preview);                        
                     }
 
-                    if (this.files.length > 0) {
+                    if (fileInput.files.length > 0) {
                         let ul = '<ul></ul>';
                         // when the file is read it triggers the onload event above.  
-                        for (var i = 0; i < this.files.length; i++) {
-                            if (this.files[i].type.indexOf("image/") >= 0) {
-                                reader.readAsDataURL(this.files[i]);
+                        for (var i = 0; i < fileInput.files.length; i++) {
+                            if (fileInput.files[i].type.indexOf("image/") >= 0) {
+                                reader.readAsDataURL(fileInput.files[i]);
                             }
 
-                            let li = "<li>" + this.files[i].name + "</li>";
+                            let li = "<li>" + fileInput.files[i].name + "</li>";
                             $(ul).append(li);
                         }
                         $(self.options.previewContainer).append(ul);
@@ -133,10 +133,10 @@ class MtFileUpload {
                     var file = files[i];
                     var typeIsValid = false;
 
-                    if (Object.prototype.toString.call(types) === '[object Array]') {
+                    if (Object.prototype.toString.call(types) === '[object Array]') {                        
                         for (var t = 0; t < types.length; t++) {
                             typeIsValid = this.typeCheck(file.type, types[t]);
-                            if (!typeIsValid) {
+                            if (typeIsValid) {
                                 break;
                             }
                         }
@@ -237,10 +237,5 @@ class MtFileUpload {
             default:
                 return false;
         }
-    }
-
-    post() {
-        let options: JQueryFormOptions;
-
-    }
+    }   
 }

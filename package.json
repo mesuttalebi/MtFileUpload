@@ -25,8 +25,7 @@
     "url": "https://github.com/mesuttalebi/MtFileUpload/issues"
   },
   "homepage": "https://github.com/mesuttalebi/MtFileUpload#readme",
-  "dependencies": {    
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jquery": "^3.3.22",
     "tslint": "^5.11.0"

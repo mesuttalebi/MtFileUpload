@@ -57,7 +57,8 @@ var MtFileUpload = /** @class */ (function () {
         var self = this;
         $(fileInput).on('change', function () {
             $(self.options.previewContainer).html('');
-            if (self.checkFileValidity(this.files, self.options.types)) {
+            var fileInput = this;
+            if (self.checkFileValidity(fileInput.files, self.options.types)) {
                 var reader = new FileReader();
                 // inject an image with the src url
                 if (self.options.types.some(function (value) { return value >= FileTypes.png; })) {
@@ -65,14 +66,14 @@ var MtFileUpload = /** @class */ (function () {
                         var preview = $(self.options.previewImgTemaplte).attr('src', event.target.result.toString());
                         $(self.options.previewContainer).append(preview);
                     };
-                    if (this.files.length > 0) {
+                    if (fileInput.files.length > 0) {
                         var ul = '<ul></ul>';
                         // when the file is read it triggers the onload event above.  
-                        for (var i = 0; i < this.files.length; i++) {
-                            if (this.files[i].type.indexOf("image/") >= 0) {
-                                reader.readAsDataURL(this.files[i]);
+                        for (var i = 0; i < fileInput.files.length; i++) {
+                            if (fileInput.files[i].type.indexOf("image/") >= 0) {
+                                reader.readAsDataURL(fileInput.files[i]);
                             }
-                            var li = "<li>" + this.files[i].name + "</li>";
+                            var li = "<li>" + fileInput.files[i].name + "</li>";
                             $(ul).append(li);
                         }
                         $(self.options.previewContainer).append(ul);
@@ -94,7 +95,7 @@ var MtFileUpload = /** @class */ (function () {
                     if (Object.prototype.toString.call(types) === '[object Array]') {
                         for (var t = 0; t < types.length; t++) {
                             typeIsValid = this.typeCheck(file.type, types[t]);
-                            if (!typeIsValid) {
+                            if (typeIsValid) {
                                 break;
                             }
                         }
@@ -185,9 +186,6 @@ var MtFileUpload = /** @class */ (function () {
             default:
                 return false;
         }
-    };
-    MtFileUpload.prototype.post = function () {
-        var options;
     };
     return MtFileUpload;
 }());
