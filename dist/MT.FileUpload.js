@@ -22,13 +22,14 @@ var ErrorTypes;
 var MtFileUpload = /** @class */ (function () {
     function MtFileUpload(inputName) {
         this.inputName = inputName;
-        this.mtImgPreview = "mtImgPreview";
+        this.mtImgPreview = "mt-img-preview";
+        this.mtRemoveBtnClass = "mt-remove-file";
         this.options = {
             // 4 MB
             maxSize: 1024 * 1024 * 4,
             types: [FileTypes.image],
             inputReplacementTemplate: "<button type='button' class='btn btn-primary' id='MtFileUpload'>Dosya Seç...</button>",
-            previewImgTemaplte: "<img alt='' class='img-thumbnail " + this.mtImgPreview + "' />"
+            previewImgTemaplte: "<img alt='' class='img-thumbnail " + this.mtImgPreview + "' />",
         };
         this.inputName = inputName;
         this.initDom();
@@ -38,7 +39,6 @@ var MtFileUpload = /** @class */ (function () {
      * replaces file input area with bootstrap button
      * */
     MtFileUpload.prototype.initDom = function () {
-        console.log($(this.inputName));
         var fileInput = $(this.inputName);
         fileInput.after(this.options.inputReplacementTemplate);
         fileInput.css('position', 'absolute');
@@ -56,34 +56,60 @@ var MtFileUpload = /** @class */ (function () {
         var fileInput = $(this.inputName);
         var self = this;
         $(fileInput).on('change', function () {
+            // Empty the container.
             $(self.options.previewContainer).html('');
             var fileInput = this;
+            // Check for files validity
             if (self.checkFileValidity(fileInput.files, self.options.types)) {
-                var reader = new FileReader();
-                // inject an image with the src url
-                if (self.options.types.some(function (value) { return value >= FileTypes.png; })) {
-                    reader.onload = function (event) {
-                        var preview = $(self.options.previewImgTemaplte).attr('src', event.target.result.toString());
-                        $(self.options.previewContainer).append(preview);
-                    };
-                    if (fileInput.files.length > 0) {
-                        var ul = '<ul></ul>';
-                        // when the file is read it triggers the onload event above.  
-                        for (var i = 0; i < fileInput.files.length; i++) {
-                            if (fileInput.files[i].type.indexOf("image/") >= 0) {
-                                reader.readAsDataURL(fileInput.files[i]);
-                            }
-                            var li = "<li>" + fileInput.files[i].name + "</li>";
-                            $(ul).append(li);
-                        }
-                        $(self.options.previewContainer).append(ul);
+                // Preview Container markup
+                var ul = '<ul></ul>';
+                $(self.options.previewContainer).append(ul);
+                // loop files to load details into container
+                for (var i = 0; i < fileInput.files.length; i++) {
+                    var currentFile = fileInput.files[i];
+                    // inject an image with the src url                    
+                    if (self.typeCheck(currentFile.type, FileTypes.image)) {
+                        self.previewImage(currentFile);
                     }
                     else {
-                        // What to do if no files added?
+                        // If file is not image    
+                        //var removeBtn = $(self.options.removeButtonTemplate).attr('data-file',currentFile.name).clone();                    
+                        var li = $("<li>" + currentFile.name + "<br />" + self.parseFileSize(currentFile.size) + "</li>"); //.prepend(removeBtn);
+                        $(self.options.previewContainer).find('ul').append(li);
                     }
                 }
             }
         });
+        // $(document).on('click','.' + self.mtRemoveBtnClass, function(ev) {
+        //     ev.stopPropagation();
+        //     ev.preventDefault();
+        //     var fileToRemove= $(ev.target).attr('data-file');
+        //     self.storedFiles.forEach((file, i ) => {
+        //         if(file.name === fileToRemove)
+        //         {
+        //             self.storedFiles = self.storedFiles.splice(i,1);
+        //             return;
+        //         }
+        //     });
+        //     $(this).parents('li').remove();            
+        //     // for(let i =0; i < self.storedFiles.length; i++) {
+        //     // }
+        //     console.log(fileToRemove);
+        // });
+    };
+    MtFileUpload.prototype.previewImage = function (currentFile) {
+        var self = this;
+        var reader = new FileReader();
+        // when the file is read it triggers the onload event above. 
+        reader.readAsDataURL(currentFile);
+        reader.onload = function (event) {
+            var preview = $(self.options.previewImgTemaplte).attr('src', event.target.result.toString());
+            var img = $(preview).clone();
+            //let removeBtn = $(self.options.removeButtonTemplate).attr('data-file',currentFile.name).clone();
+            // let li = $("<li></li>").append(removeBtn).append(img);            
+            var li = $("<li></li>").append(img);
+            $(self.options.previewContainer).find('ul').append(li);
+        };
     };
     MtFileUpload.prototype.checkFileValidity = function (files, types) {
         if (File && FileReader && FileList && window.Blob) {
@@ -92,14 +118,14 @@ var MtFileUpload = /** @class */ (function () {
                 if (files[i]) {
                     var file = files[i];
                     var typeIsValid = false;
-                    if (Object.prototype.toString.call(types) === '[object Array]') {
-                        for (var t = 0; t < types.length; t++) {
-                            typeIsValid = this.typeCheck(file.type, types[t]);
-                            if (typeIsValid) {
-                                break;
-                            }
+                    //if (Object.prototype.toString.call(types) === '[object Array]') {                        
+                    for (var t = 0; t < types.length; t++) {
+                        typeIsValid = this.typeCheck(file.type, types[t]);
+                        if (typeIsValid) {
+                            break;
                         }
                     }
+                    //}
                     if (!typeIsValid) {
                         this.addError(ErrorTypes.FileTypeError, file.name);
                         return false;
