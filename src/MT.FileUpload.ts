@@ -65,8 +65,10 @@ class MtFileUpload {
     }
 
     constructor(private inputName: string) {
-        this.inputName = inputName;
+        this.inputName = inputName;       
+    }
 
+    public init() {
         this.initDom();
         this.bindEvents();
     }
